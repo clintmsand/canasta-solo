@@ -1,0 +1,244 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="apple-touch-icon" href="assets/images/clinasta.png">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
+    <title>Canasta Solo Scordcard</title>
+
+    <style>
+      .modal-backdrop.show  {
+        opacity: .8;
+      }
+      .btn:focus {
+        outline: none;
+        box-shadow: none;
+      }
+      table, tr, td {
+      text-align: center; 
+      vertical-align: middle; 
+      }
+      .error {
+      outline: 1px solid red;
+      }
+    </style>
+    <meta property="og:image" content="assets/images/clinasta.png" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
+  </head>
+
+  <body>
+  <nav class="navbar navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Canasta Solo Scorecard</a>
+        <!--
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav">
+              
+              <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Drills
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <li><a class="dropdown-item" href="#">Holster Draw</a></li>
+                <li><a class="dropdown-item" href="#">Up+1</a></li>
+                <li><a class="dropdown-item" href="#">Up-Multiple</a></li>
+                <li><a class="dropdown-item" href="#">Problem Solving</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Settin
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Help</a>
+            </li>
+              -->
+          </ul>
+        </div>
+    </div>
+  </nav>
+
+  <br />
+  
+  <br />
+
+<div class="container-fluid">
+
+  <div id="app" class="app">
+
+    <div v-show="!gameOver">
+      <!-- <h1 v-html="title"></h1> -->
+
+      <table width="100%"> 
+        <thead>
+        <th>Points</th>
+        <th>&nbsp;</th>
+      </thead>
+      <tr>
+        <td>Going Out</td>
+        <td>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="checkbox" v-model="player1GoOut" @click="goOut('player1')">
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td># of Red 3s</td>
+        <td>
+          <button class="btn btn-primary" type="button" v-on:click="redThreeCount('player1', 'down')">-</button>
+          {{player1RedThreeCount}}
+          <button class="btn btn-primary" type="button" v-on:click="redThreeCount('player1', 'up')">+</button>
+        </td>
+      </tr>
+      <tr>
+        <td># of Natural Canastas</td>
+        <td>
+          <button class="btn btn-primary" type="button" v-on:click="canastaCount('player1', 'down', 'natural')">-</button>
+          {{player1NaturalCanastaCount}}
+          <button class="btn btn-primary" type="button" v-on:click="canastaCount('player1', 'up', 'natural')">+</button>
+        </td>
+      </tr>
+      <tr>
+        <td># of Mixed Canastas</td>
+        <td>
+          <button class="btn btn-primary" type="button" v-on:click="canastaCount('player1', 'down', 'mixed')">-</button>
+          {{player1MixedCanastaCount}}
+          <button class="btn btn-primary" type="button" v-on:click="canastaCount('player1', 'up', 'mixed')">+</button>
+        </td>
+      </tr>
+      <tr>
+        <td>Base Points</td>
+        <td>{{player1Score}}</td>
+      </tr>
+      <tr>
+        <td>Card In Hand Point Total</td>
+        <td><input v-model="player1CardHandValue" :class="{ error: player1CardHandValueHasError }" placeholder="0" @change="makeTotalScore('player1')" :disabled=player1CardHandValueIsDisabled /></td>
+      </tr>
+      <tr>
+        <td>Card Point Total (<a style="cursor:pointer;" title="
+          Jokers: 50 points each
+          A, 2: 20 points each
+          K, Q, J, 10, 9, 8:	10 points each
+          7, 6, 5, 4: 5 points each
+          ">?</a>)
+        </td>
+        <td><input v-model="player1CardValue" :class="{ error: player1CardValueHasError }" placeholder="0" @change="makeTotalScore('player1')"/></td>
+      </tr>
+      <tr>
+        <td>Total Score</td>
+        <td>{{player1TotalScore}}</td>
+
+      </tr>
+      </table><!-- player 1 -->
+   
+
+    <br />
+    <hr />
+    <br />
+    </div><!-- if not game over -->
+
+    <div class="d-grid gap-2"><button class="btn btn-primary" v-show="!gameOver" type="button" v-on:click="saveScores()" :disabled=hasError>Save Round</button></div>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Round</th>
+          <th>My Score</th>
+          <th>&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(score,i) in scores" :key="i">
+           <td>{{ i+1 }}</td>
+           <td>{{ score }}</td> 
+           <td><i v-show="!gameOver" class="bi bi-trash" style="cursor:pointer;" @click="removeRound(i, score)"></i></td>
+        </tr>
+        <tr>
+          <td>Total:</td>
+          <td>{{ player1TotalGameScore }}</td>
+          <td></td>
+        </tr>
+       </tbody>
+    </table>
+    <div v-if="player1Win" class="alert alert-success text-center" role="alert">
+      You Win!
+    </div>
+    <div v-if="player1Loss" class="alert alert-danger text-center" role="alert">
+      You Lost
+    </div>
+    <button class="btn btn-primary" type="button" v-on:click="resetAll()">Reset</button>
+
+
+
+
+  </div><!-- end vue app -->
+</div> <!-- container -->
+
+<br /><br />
+<!-- Footer -->
+<footer class="bg-primary text-center text-white text-lg-start">
+  <!-- Grid container -->
+  <div class="container p-4">
+    <!--Grid row-->
+    <div class="row">
+      <!--Grid column-->
+      <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+        
+      
+      </div>
+      <!--Grid column-->
+
+      <!--Grid column-->
+      <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+        
+      </div>
+      <!--Grid column-->
+
+    </div>
+    <!--Grid row-->
+  </div>
+  <!-- Grid container -->
+
+  <!-- Copyright -->
+  <div class="text-center p-3 text-white">
+    &copy; <script>year = new Date().getFullYear(); document.write(year);</script> Copyright: Clinasta Inc.
+  </div>
+  <!-- Copyright -->
+</footer>
+<!-- Footer -->
+
+  
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js" integrity="sha384-nsg8ua9HAw1y0W1btsyWgBklPnCUAFLuTMS2G72MMONqmOymq585AcH49TLBQObG" crossorigin="anonymous"></script>
+<script src="scorecard.js"></script>
+</body>
+
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
